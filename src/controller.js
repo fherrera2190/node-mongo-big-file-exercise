@@ -1,45 +1,37 @@
 const Records = require("./records.model");
 const { Worker } = require("worker_threads");
 const path = require("path");
-const csv = require("csv-parser");
-const fs = require("fs");
+
 
 const upload = async (req, res) => {
   /* Acá va tu código! Recordá que podés acceder al archivo desde la constante file */
-  const { file } = req;
+  // const { file } = req;
 
-  if (!file) {
-    return res.status(400).json({ error: "No file uploaded" });
+  // if (!file) {
+  //   return res.status(400).json({ error: "No file uploaded" });
+  // }
+  const file = {
+    path: "./_temp/ec6d3db317128ab4a1b9fb41469a7993"
   }
 
-  const worker = new Worker(path.resolve(__dirname, "worker.js"), {
-    workerData: file.path,
+  const worker = new Worker(path.resolve(__dirname, "csv-reader.js"), {
+    workerData: file.path, // o file.buffer si lo tenés en memoria
   });
 
-  try {
-    await new Promise((resolve, reject) => {
-      worker.on("message", (msg) => {
-        if (msg === "ok") {
-          resolve();
-        } else if (msg === "error") {
-          reject(new Error("Worker reported an error"));
-        }
-      });
+  worker.on("message", (msg) => {
+    console.log("Mensaje del worker:", msg);
+  });
 
-      worker.on("error", reject);
+  worker.on("error", (err) => {
+    console.error("Error en el worker:", err);
+  });
 
-      worker.on("exit", (code) => {
-        if (code !== 0) {
-          reject(new Error(`Worker stopped with exit code ${code}`));
-        }
-      });
-    });
-
-    return res.status(200).json({ message: "Upload completed successfully." });
-  } catch (err) {
-    console.error("Upload error:", err);
-    return res.status(500).json({ error: "Error subiendo los datos" });
-  }
+  worker.on("exit", (code) => {
+    if (code !== 0) {
+      res.status(500).json({ error: "El worker terminó con error" });
+    }
+    res.status(200).json({ message: "Upload completed successfully." });
+  });
 };
 
 const list = async (_, res) => {

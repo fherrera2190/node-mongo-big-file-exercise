@@ -6,7 +6,7 @@ const router = express.Router();
 const uploadFile = multer({ dest: './_temp' });
 
 router.post('/upload'
-    , uploadFile.single('file')
+    // , uploadFile.single('file')
     , upload);
 router.get('/records', list);
 
