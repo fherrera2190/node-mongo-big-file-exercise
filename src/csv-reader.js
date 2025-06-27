@@ -42,7 +42,7 @@ fs.createReadStream(path.resolve((__dirname, workerData)))
             console.error("❌ Error en el procesamiento de lotes:", err);
         } finally {
             await pool.terminate();
-            workerData && fs.unlinkSync(workerData); F
+            workerData && fs.unlinkSync(workerData);
             console.log("✅ Pool cerrado y proceso finalizado.");
         }
     });
