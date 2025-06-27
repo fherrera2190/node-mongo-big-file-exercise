@@ -26,7 +26,6 @@ fs.createReadStream(path.resolve((__dirname, workerData)))
     if (batch.length >= BATCH_SIZE) {
       const currentBatch = batch;
       const task = pool.exec("guardarBatchEnMongo", [currentBatch]);
-      console.log(pool.stats());
       pendingTasks.push(task);
       batch = [];
     }
