@@ -7,14 +7,14 @@ const os = require("os");
 const workerpool = require("workerpool");
 
 const config = require("./config/config");
-const pool = workerpool.pool(path.resolve(__dirname, "./worker.js"), {
-  maxWorkers: os.cpus().length - 1, // por ejemplo
-});
-console.log(os.cpus().length);
-const BATCH_SIZE = config.batchSize;
 
-console.log(path.resolve(__dirname, workerData));
-console.log((__dirname, workerData));
+//create poolworkers
+const pool = workerpool.pool(path.resolve(__dirname, "./worker.js"), {
+  maxWorkers: os.cpus().length - 1,
+  // maxWorkers: 4,
+});
+
+const BATCH_SIZE = config.batchSize;
 
 let batch = [];
 const pendingTasks = [];
@@ -32,7 +32,6 @@ fs.createReadStream(path.resolve((__dirname, workerData)))
     }
   })
   .on("end", async () => {
-    // Si quedó un lote parcial
     if (batch.length > 0) {
       const task = pool.exec("guardarBatchEnMongo", [batch]);
       pendingTasks.push(task);
@@ -40,6 +39,7 @@ fs.createReadStream(path.resolve((__dirname, workerData)))
 
     try {
       await Promise.all(pendingTasks);
+      workerData && fs.unlinkSync(workerData);
     } catch (err) {
       console.error("❌ Error en el procesamiento de lotes:", err);
     } finally {

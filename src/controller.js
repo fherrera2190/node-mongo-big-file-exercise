@@ -11,7 +11,7 @@ const upload = async (req, res) => {
   }
 
   const worker = new Worker(path.resolve(__dirname, "csv-reader.js"), {
-    workerData: file.path, // o file.buffer si lo tenés en memoria
+    workerData: file.path,
   });
 
   worker.on("message", (msg) => {
@@ -23,6 +23,7 @@ const upload = async (req, res) => {
   });
 
   worker.on("exit", (code) => {
+   
     if (code !== 0) {
       res.status(500).json({ error: "El worker terminó con error" });
     }
