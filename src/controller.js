@@ -2,16 +2,12 @@ const Records = require("./records.model");
 const { Worker } = require("worker_threads");
 const path = require("path");
 
-
 const upload = async (req, res) => {
   /* Acá va tu código! Recordá que podés acceder al archivo desde la constante file */
-  // const { file } = req;
+  const { file } = req;
 
-  // if (!file) {
-  //   return res.status(400).json({ error: "No file uploaded" });
-  // }
-  const file = {
-    path: "./_temp/ec6d3db317128ab4a1b9fb41469a7993"
+  if (!file) {
+    return res.status(400).json({ error: "No file uploaded" });
   }
 
   const worker = new Worker(path.resolve(__dirname, "csv-reader.js"), {

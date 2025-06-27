@@ -1,5 +1,5 @@
 const config = require("./config/config");
-const workerpool = require('workerpool');
+const workerpool = require("workerpool");
 const Records = require("./records.model");
 const mongoose = require("mongoose");
 mongoose.set("strictQuery", false);
@@ -10,7 +10,6 @@ async function connectDB() {
     const mongoDB = config.mongoDB;
     const options = config.options;
     client = await mongoose.connect(mongoDB, options);
-
   }
 }
 
@@ -23,6 +22,5 @@ async function guardarBatchEnMongo(batch) {
 }
 
 workerpool.worker({
-  guardarBatchEnMongo
+  guardarBatchEnMongo,
 });
-
